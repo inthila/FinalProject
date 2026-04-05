@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from .resources import Resource
 from .sandwiches import Sandwich
 
@@ -23,5 +23,4 @@ class Recipe(RecipeBase):
     sandwich: Sandwich = None
     resource: Resource = None
 
-    class ConfigDict:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
