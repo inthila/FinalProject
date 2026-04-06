@@ -1,26 +1,40 @@
-from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional, List
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from .order_details import OrderDetail
+from .promo_codes import PromoCode
+from .order_items import OrderItem
 
 
+# Shared order fields reused by multiple order schemas
 class OrderBase(BaseModel):
     customer_name: str
-    description: Optional[str] = None
+    customer_phone: str
+    customer_address: Optional[str] = None
+    order_type: str
+    payment_method: str
 
 
+# Schema used when creating a new order
 class OrderCreate(OrderBase):
-    pass
+    promo_code_id: Optional[int] = None
+    order_items: List[OrderItem] = []
 
 
+# Schema used for partial order updates, so all fields are optional
 class OrderUpdate(BaseModel):
-    customer_name: Optional[str] = None
-    description: Optional[str] = None
+    status: Optional[str] = None
+    customer_address: Optional[str] = None
+    payment_method: Optional[str] = None
 
 
+# Schema returned in responses, including the database-generated ID and related data
 class Order(OrderBase):
     id: int
-    order_date: datetime
-    order_details: list[OrderDetail] = Field(default_factory=list)
+    tracking_number: str
+    status: str
+    total_price: float
+    created_at: datetime
+    promo_code: PromoCode = None
+    order_items: List[OrderItem] = []
 
     model_config = ConfigDict(from_attributes=True)
