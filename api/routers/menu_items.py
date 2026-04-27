@@ -16,8 +16,18 @@ def create(request: schema.MenuItemCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[schema.MenuItem])
-def read_all(db: Session = Depends(get_db)):
-    return controller.read_all(db)
+def read_all(
+    category: str | None = None,
+    search: str | None = None,
+    is_available: bool | None = None,
+    db: Session = Depends(get_db)
+):
+    return controller.read_all(
+        db,
+        category=category,
+        search=search,
+        is_available=is_available
+    )
 
 
 @router.get("/{item_id}", response_model=schema.MenuItem)
