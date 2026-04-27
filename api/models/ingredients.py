@@ -13,3 +13,4 @@ class Ingredient(Base):
     low_stock_threshold = Column(DECIMAL(10, 2), nullable=False, server_default='10.0')
 
     menu_items = relationship("MenuItemIngredient", back_populates="ingredient")
+    low_stock_alerts = relationship("LowStocksAlert", back_populates="ingredient", cascade="all, delete-orphan")
