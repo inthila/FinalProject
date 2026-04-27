@@ -20,6 +20,11 @@ def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
 
+@router.get("/lowstock", response_model=list[schema.Ingredient])
+def read_low_stock(db: Session = Depends(get_db)):
+    return controller.read_low_stock(db)
+
+
 @router.get("/{item_id}", response_model=schema.Ingredient)
 def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)

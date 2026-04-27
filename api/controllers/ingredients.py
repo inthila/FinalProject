@@ -32,6 +32,19 @@ def read_all(db: Session):
     return result
 
 
+def read_low_stock(db: Session):
+    try:
+        result = (
+            db.query(model.Ingredient)
+            .filter(model.Ingredient.quantity <= model.Ingredient.low_stock_threshold)
+            .all()
+        )
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
+
+
 def read_one(db: Session, item_id):
     try:
         item = db.query(model.Ingredient).filter(model.Ingredient.id == item_id).first()
