@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Literal
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from .promo_codes import PromoCode
@@ -10,7 +10,7 @@ class OrderBase(BaseModel):
     customer_name: str
     customer_phone: str
     customer_address: Optional[str] = None
-    order_type: str
+    order_type: Literal["takeout", "delivery"]
     payment_method: str
 
 
