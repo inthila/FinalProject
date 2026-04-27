@@ -19,14 +19,12 @@ def create(request: schema.MenuItemCreate, db: Session = Depends(get_db)):
 def read_all(
     category: str | None = None,
     search: str | None = None,
-    is_available: bool | None = None,
     db: Session = Depends(get_db)
 ):
     return controller.read_all(
         db,
         category=category,
-        search=search,
-        is_available=is_available
+        search=search
     )
 
 

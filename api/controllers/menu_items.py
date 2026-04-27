@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
 from ..models import menu_items as model
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import or_
 
 
 def create(db: Session, request):
@@ -26,26 +25,16 @@ def create(db: Session, request):
     return new_item
 
 
-def read_all(db: Session, category=None, search=None, is_available=None):
+def read_all(db: Session, category=None, search=None):
     try:
         query = db.query(model.MenuItem)
 
-        # menu filters
-        # returns a flat list of MenuItem records, just filtered and ordered
         if category:
             query = query.filter(model.MenuItem.category == category)
 
         if search:
             search_term = f"%{search}%"
-            query = query.filter(
-                or_(
-                    model.MenuItem.name.ilike(search_term),
-                    model.MenuItem.description.ilike(search_term)
-                )
-            )
-
-        if is_available is not None:
-            query = query.filter(model.MenuItem.is_available == is_available)
+            query = query.filter(model.MenuItem.name.ilike(search_term))
 
         result = query.order_by(model.MenuItem.category.asc(), model.MenuItem.name.asc()).all()
     except SQLAlchemyError as e:
