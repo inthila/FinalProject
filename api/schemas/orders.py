@@ -16,6 +16,7 @@ class OrderBase(BaseModel):
 
 # Schema used when creating a new order
 class OrderCreate(OrderBase):
+    total_price: float
     promo_code_id: Optional[int] = None
     order_items: List[OrderItem] = []
 
