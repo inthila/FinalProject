@@ -4,6 +4,7 @@ from ..models import orders as model
 from ..models import promo_codes as promo_model
 from sqlalchemy.exc import SQLAlchemyError
 from decimal import Decimal, ROUND_HALF_UP
+from datetime import date
 import uuid
 
 
@@ -17,6 +18,8 @@ def create(db: Session, request):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promo code not found!")
         if not promo_code.is_active:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Promo code is inactive!")
+        if promo_code.expiration_date < date.today():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Promo code is expired!")
 
         discount_percent = Decimal(str(promo_code.discount_percent))
         discount_amount = (total_price * discount_percent / Decimal("100")).quantize(
