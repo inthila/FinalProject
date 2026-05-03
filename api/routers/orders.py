@@ -31,6 +31,11 @@ def read_revenue_by_date(date: date, db: Session = Depends(get_db)):
     return controller.read_revenue_by_date(db, target_date=date)
 
 
+@router.get("/daterange", response_model=list[schema.Order])
+def read_by_date_range(start: date, end: date, db: Session = Depends(get_db)):
+    return controller.read_by_date_range(db, start_date=start, end_date=end)
+
+
 @router.get("/{item_id}", response_model=schema.Order)
 def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)

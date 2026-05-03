@@ -104,6 +104,27 @@ def read_revenue_by_date(db: Session, target_date: date):
     return {"date": target_date, "revenue": float(total_revenue)}
 
 
+def read_by_date_range(db: Session, start_date: date, end_date: date):
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Start date must be on or before end date!"
+        )
+
+    try:
+        result = (
+            db.query(model.Order)
+            .filter(func.date(model.Order.created_at) >= start_date)
+            .filter(func.date(model.Order.created_at) <= end_date)
+            .order_by(model.Order.created_at.asc())
+            .all()
+        )
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
+
+
 def update(db: Session, item_id, request):
     try:
         item = db.query(model.Order).filter(model.Order.id == item_id)
