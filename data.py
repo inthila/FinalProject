@@ -28,8 +28,8 @@ db.add(alert1)
 db.commit()
 
 promo1 = PromoCode(code="SAVE10", discount_percent=10.00, expiration_date=date(2025, 12, 31), is_active=True)
-promo2 = PromoCode(code="HALFOFF", discount_percent=50.00, expiration_date=date(2024, 1, 1), is_active=False)
-promo3 = PromoCode(code="WELCOME5", discount_percent=5.00, expiration_date=date(2025, 12, 31), is_active=True)
+promo2 = PromoCode(code="HALFOFF", discount_percent=50.00, expiration_date=date(2026, 1, 1), is_active=False)
+promo3 = PromoCode(code="WELCOME5", discount_percent=5.00, expiration_date=date(2026, 12, 31), is_active=True)
 db.add_all([promo1, promo2, promo3])
 db.commit()
 
