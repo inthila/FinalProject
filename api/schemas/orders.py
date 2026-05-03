@@ -1,6 +1,6 @@
 from typing import Optional, List, Literal
 from pydantic import BaseModel, ConfigDict
-from datetime import datetime
+from datetime import datetime, date
 from .promo_codes import PromoCode
 from .order_items import OrderItem
 
@@ -39,3 +39,8 @@ class Order(OrderBase):
     order_items: List[OrderItem] = []
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class OrderRevenue(BaseModel):
+    date: date
+    revenue: float

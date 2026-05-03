@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi import APIRouter, Depends, FastAPI, status, Response
 from sqlalchemy.orm import Session
 from ..controllers import orders as controller
@@ -23,6 +24,11 @@ def read_all(db: Session = Depends(get_db)):
 @router.get("/track/{tracking_number}", response_model=schema.Order)
 def read_by_tracking_number(tracking_number: str, db: Session = Depends(get_db)):
     return controller.read_by_tracking_number(db, tracking_number=tracking_number)
+
+
+@router.get("/revenue", response_model=schema.OrderRevenue)
+def read_revenue_by_date(date: date, db: Session = Depends(get_db)):
+    return controller.read_revenue_by_date(db, target_date=date)
 
 
 @router.get("/{item_id}", response_model=schema.Order)

@@ -3,6 +3,7 @@ from fastapi import HTTPException, status, Response
 from ..models import orders as model
 from ..models import promo_codes as promo_model
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import date
 import uuid
@@ -83,6 +84,24 @@ def read_by_tracking_number(db: Session, tracking_number: str):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return item
+
+
+def read_revenue_by_date(db: Session, target_date: date):
+    try:
+        revenue = (
+            db.query(func.sum(model.Order.total_price))
+            .filter(func.date(model.Order.created_at) == target_date)
+            .scalar()
+        )
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+
+    total_revenue = Decimal(str(revenue or "0.00")).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+    return {"date": target_date, "revenue": float(total_revenue)}
 
 
 def update(db: Session, item_id, request):
