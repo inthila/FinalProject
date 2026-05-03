@@ -3,6 +3,7 @@ from fastapi import HTTPException, status, Response
 from ..models import orders as model
 from ..models import promo_codes as promo_model
 from ..models import menu_items as menu_item_model
+from ..models import order_items as order_item_model
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 from decimal import Decimal, ROUND_HALF_UP
@@ -60,6 +61,19 @@ def create(db: Session, request):
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
+
+        # Save order items
+        for item in request.order_items:
+            new_order_item = order_item_model.OrderItem(
+                order_id=new_item.id,
+                menu_item_id=item.menu_item_id,
+                quantity=item.quantity,
+                special_instructions=item.special_instructions
+            )
+            db.add(new_order_item)
+        db.commit()
+        db.refresh(new_item)
+
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
