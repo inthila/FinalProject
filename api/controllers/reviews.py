@@ -31,6 +31,19 @@ def read_all(db: Session):
     return result
 
 
+def read_low_rated(db: Session):
+    try:
+        result = (
+            db.query(model.Review)
+            .filter(model.Review.rating <= 2)
+            .all()
+        )
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
+
+
 def read_one(db: Session, item_id):
     try:
         item = db.query(model.Review).filter(model.Review.id == item_id).first()
