@@ -1,12 +1,7 @@
-from fastapi.testclient import TestClient
 from ..controllers import orders as controller
-from ..main import app
 import pytest
-from ..models import orders as model
-
-# Create a test client for the app
-client = TestClient(app)
-
+from types import SimpleNamespace
+from decimal import Decimal
 
 @pytest.fixture
 def db_session(mocker):
@@ -14,18 +9,22 @@ def db_session(mocker):
 
 
 def test_create_order(db_session):
-    # Create a sample order
-    order_data = {
-        "customer_name": "John Doe",
-        "description": "Test order"
-    }
+    order_request = SimpleNamespace(
+        customer_name="John Doe",
+        customer_phone="555-1234",
+        customer_address="123 Main St",
+        order_type="delivery",
+        payment_method="card",
+        total_price=25.00,
+        promo_code_id=None,
+    )
 
-    order_object = model.Order(**order_data)
+    created_order = controller.create(db_session, order_request)
 
-    # Call the create function
-    created_order = controller.create(db_session, order_object)
-
-    # Assertions
     assert created_order is not None
     assert created_order.customer_name == "John Doe"
-    assert created_order.description == "Test order"
+    assert created_order.customer_phone == "555-1234"
+    assert created_order.total_price == Decimal("25.0")
+    db_session.add.assert_called_once()
+    db_session.commit.assert_called_once()
+    db_session.refresh.assert_called_once_with(created_order)

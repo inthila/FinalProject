@@ -11,6 +11,7 @@ def test_order_create_accepts_takeout():
         customer_address="123 Main St",
         order_type="takeout",
         payment_method="card",
+        total_price=12.50,
     )
 
     assert order.order_type == "takeout"
@@ -23,6 +24,7 @@ def test_order_create_accepts_delivery():
         customer_address="456 Main St",
         order_type="delivery",
         payment_method="cash",
+        total_price=18.25,
     )
 
     assert order.order_type == "delivery"
@@ -36,4 +38,5 @@ def test_order_create_rejects_invalid_order_type():
             customer_address="123 Main St",
             order_type="pickup",
             payment_method="card",
+            total_price=10.00,
         )
