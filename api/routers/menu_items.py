@@ -18,13 +18,13 @@ def create(request: schema.MenuItemCreate, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[schema.MenuItem])
 def read_all(
     category: str | None = None,
-    search: str | None = None,
+    name: str | None = None,
     db: Session = Depends(get_db)
 ):
     return controller.read_all(
         db,
         category=category,
-        search=search
+        name=name
     )
 
 

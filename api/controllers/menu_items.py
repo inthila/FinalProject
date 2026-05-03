@@ -25,15 +25,15 @@ def create(db: Session, request):
     return new_item
 
 
-def read_all(db: Session, category=None, search=None):
+def read_all(db: Session, category=None, name=None):
     try:
         query = db.query(model.MenuItem)
 
         if category:
             query = query.filter(model.MenuItem.category == category)
 
-        if search:
-            search_term = f"%{search}%"
+        if name:
+            search_term = f"%{name}%"
             query = query.filter(model.MenuItem.name.ilike(search_term))
 
         result = query.order_by(model.MenuItem.category.asc(), model.MenuItem.name.asc()).all()

@@ -2,14 +2,29 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
 from ..models import orders as model
 from ..models import promo_codes as promo_model
+from ..models import menu_items as menu_item_model
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import date
 import uuid
 
-
 def create(db: Session, request):
+    for item in request.order_items:
+        menu_item = db.query(menu_item_model.MenuItem).filter(
+            menu_item_model.MenuItem.id == item.menu_item_id
+        ).first()
+        if not menu_item:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Menu item {item.menu_item_id} not found!")
+        for link in menu_item.ingredients:
+            required = link.quantity_required * item.quantity
+            if link.ingredient.quantity < required:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Insufficient stock for ingredient: {link.ingredient.name} "
+                           f"(need {required} {link.ingredient.unit}, have {link.ingredient.quantity})"
+                )
+
     total_price = Decimal(str(request.total_price))
     promo_code_id = request.promo_code_id
 
