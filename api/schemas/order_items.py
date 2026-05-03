@@ -11,7 +11,6 @@ class OrderItemBase(BaseModel):
 
 # Schema used when creating a new order item
 class OrderItemCreate(OrderItemBase):
-    order_id: int
     menu_item_id: int
 
 

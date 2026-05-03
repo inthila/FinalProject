@@ -2,7 +2,7 @@ from typing import Optional, List, Literal
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime, date
 from .promo_codes import PromoCode
-from .order_items import OrderItem
+from .order_items import OrderItem, OrderItemCreate
 
 
 # Shared order fields reused by multiple order schemas
@@ -18,7 +18,7 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     total_price: float
     promo_code_id: Optional[int] = None
-    order_items: List[OrderItem] = []
+    order_items: List[OrderItemCreate] = []
 
 
 # Schema used for partial order updates, so all fields are optional
@@ -35,7 +35,7 @@ class Order(OrderBase):
     status: str
     total_price: float
     created_at: datetime
-    promo_code: PromoCode = None
+    promo_code: Optional[PromoCode] = None
     order_items: List[OrderItem] = []
 
     model_config = ConfigDict(from_attributes=True)
